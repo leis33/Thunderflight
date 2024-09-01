@@ -1,0 +1,30 @@
+{
+  "name": "thunderflight",
+  "version": "1.0.0",
+  "description": "A simple side scroller game using Pixi.js",
+  "main": "index.js",
+  "scripts": {
+    "setup": "npm i",
+    "build": "npx webpack --config webpack.config.js",
+    "serve": "npx webpack serve"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gsap": "3.12.5",
+    "pixi.js": "8.3.4",
+    "typescript": "5.5.4"
+  },
+  "devDependencies": {
+    "acorn": "8.11.2",
+    "copy-webpack-plugin": "11.0.0",
+    "file-loader": "6.2.0",
+    "html-webpack-plugin": "5.5.3",
+    "ts-loader": "9.5.0",
+    "webpack": "5.89.0",
+    "webpack-cli": "5.1.4",
+    "webpack-dev-middleware": "6.1.1",
+    "webpack-dev-server": "5.0.4",
+    "webpack-hot-middleware": "2.25.4"
+  }
+}
