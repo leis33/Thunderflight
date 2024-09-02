@@ -14,9 +14,10 @@ class GameApp {
 
     private async createApp(): Promise<void> {
         this.app = new PIXI.Application();
+
         await this.app.init({
             resizeTo: window,
-            background: "#00AA00"
+            background: Settings.BACKGROUND_COLOR
         });
         
         let mainNode: HTMLElement = document.getElementById(Settings.CONTAINER_ID);
@@ -31,8 +32,17 @@ class GameApp {
     }
     
     private async loadAssets(): Promise<void> {
+        PIXI.Assets.add({ alias: "layer0", src: "assets/sprites/background/layer0.png" });
+        PIXI.Assets.add({ alias: "layer1", src: "assets/sprites/background/layer1.png" });
+        PIXI.Assets.add({ alias: "layer2", src: "assets/sprites/background/layer2.png" });
+        PIXI.Assets.add({ alias: "layer3", src: "assets/sprites/background/layer3.png" });
+        PIXI.Assets.add({ alias: "layer4", src: "assets/sprites/background/layer4.png" });
+        PIXI.Assets.add({ alias: "layer5", src: "assets/sprites/background/layer5.png" });
+        PIXI.Assets.add({ alias: "layer6", src: "assets/sprites/background/layer6.png" });
+        PIXI.Assets.add({ alias: "layer7", src: "assets/sprites/background/layer7.png" });
         PIXI.Assets.add({ alias: "plane", src: "assets/sprites/plane.png" });
-        await PIXI.Assets.load(["plane"]);
+
+        await PIXI.Assets.load(["plane", "layer0", "layer1", "layer2", "layer3", "layer4", "layer5", "layer6", "layer7"]);
 
         this.startMainScene();
     }
@@ -40,6 +50,7 @@ class GameApp {
     private startMainScene(): void {
         this.main = new Main(this.app);
         this.app.stage.addChild(this.main);
+
         this.resize();
     }
     
@@ -50,6 +61,8 @@ class GameApp {
 
         if (this.main) {
             this.main.scale.set(scale);
+            this.main.x = this.app.screen.width / 2 - this.main.width / 2;
+            this.main.y = this.app.screen.height / 2 - this.main.height / 2;
         }
     }
 
