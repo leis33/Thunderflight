@@ -125,6 +125,8 @@ class Main extends PIXI.Container {
 
     private gameOver(): void {
         console.log("GAME OVER");
+
+        this.ui.setFuel(this.plane.fuel);
         this.isGameActive = false;
         this.plane.removeAllListeners();
     }
@@ -250,6 +252,8 @@ class Main extends PIXI.Container {
     }
 
     private updateUI(elapsedMS: number): void {
+        if (!this.isGameActive) return;
+
         let score: number = Math.floor(elapsedMS / 1000) * Settings.SCORE_MULTIPLIER;
 
         this.ui.setScore(score);
