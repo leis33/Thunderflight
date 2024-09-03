@@ -36,6 +36,7 @@ class Settings {
     public static MISSILE_SPAWN_Y_MIN: number = 50;
     public static MISSILE_HITBOX_HEIGHT: number = 10;
 
+    public static SCORE_MULTIPLIER: number = 10;
 }
 
 export { Settings }

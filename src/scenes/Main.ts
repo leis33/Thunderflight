@@ -5,6 +5,7 @@ import { Settings } from "../utils/Settings";
 import { Tank } from "../graphics/Tank";
 import { getRandom, wait } from "../utils/HelperFunctions";
 import { Missile } from "../graphics/Missile";
+import { UI } from "../graphics/UI";
 
 class Main extends PIXI.Container {
     private app: PIXI.Application;
@@ -13,6 +14,8 @@ class Main extends PIXI.Container {
     private plane: Plane;
     private tanks: Tank[] = [];
     private missiles: Missile[] = [];
+
+    private ui: UI;
 
     constructor(app: PIXI.Application) {
         super();
@@ -23,6 +26,7 @@ class Main extends PIXI.Container {
         this.createPlane();
         this.createTanks();
         this.createMissiles();
+        this.createUI();
 
         this.update();
     }
@@ -84,6 +88,11 @@ class Main extends PIXI.Container {
             await wait(400);
         }
     }
+
+    private createUI(): void {
+        this.ui = new UI();
+        this.addChild(this.ui);
+    }
     // end of create methods
 
     // event methods
@@ -94,11 +103,17 @@ class Main extends PIXI.Container {
 
     // game loop
     private update(): void {
+        const startTime = performance.now();
+
         this.app.ticker.add((ticker: PIXI.Ticker) => {
             this.background.updateLayers();
             this.updateTanks();
             this.updateMissiles();
             this.detectCollisions()
+
+            const currentTime = performance.now();
+            const elapsedTime = currentTime - startTime;
+            this.updateScore(Math.floor(elapsedTime / 1000));
         });
     }
 
@@ -177,6 +192,10 @@ class Main extends PIXI.Container {
                 console.log("COLLISION MISSILE !!!!!!");
             }
         }
+    }
+
+    private updateScore(score: number): void {
+        this.ui.setScore(score * Settings.SCORE_MULTIPLIER);
     }
 
     public destroy(): void {
