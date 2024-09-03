@@ -1,10 +1,10 @@
 import * as PIXI from "pixi.js";
-import gsap from "gsap";
 import { Plane } from "../graphics/Plane";
 import { ParallaxBackground } from "../graphics/ParallaxBackground";
 import { Settings } from "../utils/Settings";
 import { Tank } from "../graphics/Tank";
 import { getRandom, wait } from "../utils/HelperFunctions";
+import { Missile } from "../graphics/Missile";
 
 class Main extends PIXI.Container {
     private app: PIXI.Application;
@@ -12,6 +12,7 @@ class Main extends PIXI.Container {
     private background: ParallaxBackground;
     private plane: Plane;
     private tanks: Tank[] = [];
+    private missiles: Missile[] = [];
 
     constructor(app: PIXI.Application) {
         super();
@@ -21,6 +22,7 @@ class Main extends PIXI.Container {
         this.createBackground();
         this.createPlane();
         this.createTanks();
+        this.createMissiles();
 
         this.update();
     }
@@ -64,6 +66,24 @@ class Main extends PIXI.Container {
             await wait(2300);
         }
     }
+
+    private async createMissiles(): Promise<void> {
+        let missileX: number = Settings.MISSILE_SPAWN_X;
+        let missileY: number;
+
+        for (let i = 0; i < Settings.MISSILES_COUNT; i++) {
+            missileY = getRandom(Settings.MISSILE_SPAWN_Y_MAX, Settings.MISSILE_SPAWN_Y_MIN);
+
+            let missile = new Missile(PIXI.Texture.from("missile"));
+            missile.anchor.set(0.5);
+            missile.x = missileX;
+            missile.y = missileY;
+            this.addChild(missile);
+            this.missiles.push(missile);
+
+            await wait(400);
+        }
+    }
     // end of create methods
 
     // event methods
@@ -77,6 +97,7 @@ class Main extends PIXI.Container {
         this.app.ticker.add((ticker: PIXI.Ticker) => {
             this.background.updateLayers();
             this.updateTanks();
+            this.updateMissiles();
             this.detectCollisions()
         });
     }
@@ -110,29 +131,50 @@ class Main extends PIXI.Container {
         }
     }
 
+    private updateMissiles(): void {
+        for (const missile of this.missiles) {
+            missile.update();
+
+            if (missile.x < Settings.MISSILE_X_MIN) {
+                missile.x = Settings.MISSILE_SPAWN_X;
+                missile.y = getRandom(Settings.MISSILE_SPAWN_Y_MAX, Settings.MISSILE_SPAWN_Y_MIN);
+            }
+        }
+    }
+
     private detectCollisions(): void {
         for (const tank of this.tanks) {
             // plane and tank
-            if (this.plane.x + this.plane.width / 2 > tank.x - tank.getTankWidth() / 2 &&
-                this.plane.y + this.plane.height / 2 > tank.y - tank.getTankHeight() / 2 &&
-                this.plane.x - this.plane.width / 2 < tank.x + tank.getTankWidth() / 2 &&
-                this.plane.y - this.plane.height / 2 < tank.y + tank.getTankHeight() / 2) {
-                console.log("COLLISION !!!!!!");
+            if (this.plane.x + Settings.PLANE_HITBOX_WIDTH / 2 > tank.x - tank.getTankWidth() / 2 &&
+                this.plane.y + Settings.PLANE_HITBOX_HEIGHT / 2 > tank.y - tank.getTankHeight() / 2 &&
+                this.plane.x - Settings.PLANE_HITBOX_WIDTH / 2 < tank.x + tank.getTankWidth() / 2 &&
+                this.plane.y - Settings.PLANE_HITBOX_HEIGHT / 2 < tank.y + tank.getTankHeight() / 2) {
+                console.log("COLLISION TANK !!!!!!");
             }
 
             // bullet and world bounds
-            let bulletCoords: PIXI.Point = this.toLocal({ x: tank.getBulletX(), y: tank.getBulletY()}, tank);
+            let bulletCoords: PIXI.Point = this.toLocal({ x: tank.getBulletX(), y: tank.getBulletY() }, tank);
             if (bulletCoords.x < Settings.TANK_X_MIN || bulletCoords.y > Settings.GAME_HEIGHT) {
                 console.log("Bullet reset");
                 tank.resetBullet();
             }
 
-            // bullet and plane
-            if (this.plane.x + this.plane.width / 2 > bulletCoords.x &&
-                this.plane.y + this.plane.height / 2 > bulletCoords.y &&
-                this.plane.x - this.plane.width / 2 < bulletCoords.x &&
-                this.plane.y - this.plane.height / 2 < bulletCoords.y) {
+            // plane and bullet
+            if (this.plane.x + Settings.PLANE_HITBOX_WIDTH / 2 > bulletCoords.x &&
+                this.plane.y + Settings.PLANE_HITBOX_HEIGHT / 2 > bulletCoords.y &&
+                this.plane.x - Settings.PLANE_HITBOX_WIDTH / 2 < bulletCoords.x &&
+                this.plane.y - Settings.PLANE_HITBOX_HEIGHT / 2 < bulletCoords.y) {
                 console.log("COLLISION !!!!!!");
+            }
+        }
+
+        for (const missile of this.missiles) {
+            // plane and missile
+            if (this.plane.x + Settings.PLANE_HITBOX_WIDTH / 2 > missile.x - missile.width / 2 &&
+                this.plane.y + Settings.PLANE_HITBOX_HEIGHT / 2 > missile.y - Settings.MISSILE_HITBOX_HEIGHT / 2 &&
+                this.plane.x - Settings.PLANE_HITBOX_WIDTH / 2 < missile.x + missile.width / 2 &&
+                this.plane.y - Settings.PLANE_HITBOX_HEIGHT / 2 < missile.y + Settings.MISSILE_HITBOX_HEIGHT / 2) {
+                console.log("COLLISION MISSILE !!!!!!");
             }
         }
     }
@@ -142,6 +184,12 @@ class Main extends PIXI.Container {
 
         if (this.plane) {
             this.plane.removeAllListeners();
+        }
+
+        if (this.tanks && this.tanks.length > 0) {
+            for (let tank of this.tanks) {
+                tank.removeAllListeners();
+            }
         }
     }
 }
