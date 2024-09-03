@@ -57,6 +57,8 @@ class Bullet extends PIXI.Sprite {
         let newX: number = ((this._velocity) * Math.cos(45 * 3.14 / 180)) * t;
         let newY: number = ((this._velocity) * Math.sin(45 * 3.14 / 180)) * t + Settings.GRAVITY * t * t;
 
+        this.rotation = Math.atan2(newY - this.y, newX - this.x) - 3.14;
+
         this.x = newX;
         this.y = newY;
     }
