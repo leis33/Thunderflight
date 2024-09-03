@@ -3,10 +3,14 @@ import gsap from "gsap";
 import { getRandom } from "../utils/HelperFunctions";
 import { Settings } from "../utils/Settings";
 
+interface ITimeObject {
+    time: number
+}
+
 class Bullet extends PIXI.Sprite {
     private _velocity: number;
     
-    private timeObject: any = {
+    private timeObject: ITimeObject = {
         time: 0
     };
     private tweenBullet: gsap.core.Tween;
