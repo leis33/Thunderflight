@@ -63,7 +63,7 @@ class Main extends PIXI.Container {
 
             tank.fireBullet();
 
-            await wait(2300);
+            await wait(1850);
         }
     }
 

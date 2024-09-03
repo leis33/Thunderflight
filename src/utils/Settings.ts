@@ -18,7 +18,7 @@ class Settings {
     public static PLANE_HITBOX_HEIGHT: number = 50;
 
     public static TANKS_COUNT: number = 4;
-    public static TANK_SPEED: number = -1;
+    public static TANK_SPEED: number = -1.2;
     public static TANK_SPAWN_X: number = Settings.GAME_WIDTH + 60;
     public static TANK_X_MIN: number = -120;
     public static TANK_SPAWN_Y_MAX: number = 110;
