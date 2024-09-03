@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js"
+import { Settings } from "../utils/Settings";
 
 class ParallaxBackground extends PIXI.Container {
     private layer0: PIXI.TilingSprite;
@@ -17,14 +18,14 @@ class ParallaxBackground extends PIXI.Container {
     }
 
     public updateLayers(): void {
-        this.layer7.tilePosition.x -= 0.05;
-        this.layer6.tilePosition.x -= 0.1;
-        this.layer5.tilePosition.x -= 0.2;
-        this.layer4.tilePosition.x -= 0.5;
-        this.layer3.tilePosition.x -= 0.5;
-        this.layer2.tilePosition.x -= 0.5;
-        this.layer1.tilePosition.x -= 0.5;
-        this.layer0.tilePosition.x -= 1;
+        this.layer7.tilePosition.x += Settings.LAYER_7_SPEED;
+        this.layer6.tilePosition.x += Settings.LAYER_6_SPEED;
+        this.layer5.tilePosition.x += Settings.LAYER_5_SPEED;
+        this.layer4.tilePosition.x += Settings.LAYER_4_SPEED;
+        this.layer3.tilePosition.x += Settings.LAYER_3_SPEED;
+        this.layer2.tilePosition.x += Settings.LAYER_2_SPEED;
+        this.layer1.tilePosition.x += Settings.LAYER_1_SPEED;
+        this.layer0.tilePosition.x += Settings.LAYER_0_SPEED;
     }
     
 

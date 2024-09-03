@@ -2,12 +2,15 @@ import * as PIXI from "pixi.js";
 import { Plane } from "../graphics/Plane";
 import { ParallaxBackground } from "../graphics/ParallaxBackground";
 import { Settings } from "../utils/Settings";
+import { Tank } from "../graphics/Tank";
+import { getRandom } from "../utils/HelperFunctions";
 
 class Main extends PIXI.Container {
     private app: PIXI.Application;
 
     private background: ParallaxBackground;
     private plane: Plane;
+    private tanks: Tank[] = [];
 
     constructor(app: PIXI.Application) {
         super();
@@ -16,6 +19,7 @@ class Main extends PIXI.Container {
 
         this.createBackground();
         this.createPlane();
+        this.createTanks();
 
         this.update();
     }
@@ -34,13 +38,37 @@ class Main extends PIXI.Container {
         this.plane.on("globalpointermove", this.positionPlane, this);
         this.addChild(this.plane);
     }
+
+    private createTanks(): void {
+        const tanksKeys: string[] = ["tank1", "tank2"];
+        const bulletKeys: string[] = ["bullet1", "bullet2"];
+        let randomKey: number;
+
+        let tankX: number = Settings.TANK_SPAWN_X;
+        let tankY: number;
+        
+        for (let i = 0; i < Settings.TANKS_COUNT; i++) {
+            randomKey = getRandom(tanksKeys.length, 0);
+            tankY = Settings.GAME_HEIGHT - getRandom(Settings.TANK_SPAWN_Y_MAX, Settings.TANK_SPAWN_Y_MIN);
+
+            let tank = new Tank(tanksKeys[randomKey], bulletKeys[randomKey]);
+            tank.x = tankX;
+            tank.y = tankY;
+            this.addChild(tank);
+            this.tanks.push(tank);
+
+            tankX += Settings.TANK_SPAWN_X_STEP;
+        }
+    }
     // end of create methods
 
     // game loop
     private update(): void {
         this.app.ticker.add((ticker: PIXI.Ticker) => {
             this.background.updateLayers();
-        })
+            this.updateTanks();
+            this.detectCollisions()
+        });
     }
 
     private positionPlane(event: PIXI.FederatedPointerEvent): void {
@@ -60,6 +88,27 @@ class Main extends PIXI.Container {
 
         this.plane.x = coords.x;
         this.plane.y = coords.y;
+    }
+
+    private updateTanks(): void {
+        for (const tank of this.tanks) {
+            tank.update();
+
+            if (tank.x < Settings.TANK_X_MIN) {
+                tank.x = Settings.TANK_SPAWN_X;
+            }
+        }
+    }
+
+    private detectCollisions(): void {
+        for (const tank of this.tanks) {
+            if (this.plane.x + this.plane.width / 2 > tank.x - tank.width / 2 &&
+                this.plane.y + this.plane.height / 2 > tank.y - tank.height / 2 &&
+                this.plane.x - this.plane.width / 2 < tank.x + tank.width / 2 &&
+                this.plane.y - this.plane.height / 2 < tank.y + tank.height / 2) {
+                console.log("COLLISION !!!!!!");
+            }
+        }
     }
 
     public destroy(): void {

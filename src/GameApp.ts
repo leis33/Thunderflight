@@ -40,9 +40,19 @@ class GameApp {
         PIXI.Assets.add({ alias: "layer5", src: "assets/sprites/background/layer5.png" });
         PIXI.Assets.add({ alias: "layer6", src: "assets/sprites/background/layer6.png" });
         PIXI.Assets.add({ alias: "layer7", src: "assets/sprites/background/layer7.png" });
-        PIXI.Assets.add({ alias: "plane", src: "assets/sprites/plane.png" });
 
-        await PIXI.Assets.load(["plane", "layer0", "layer1", "layer2", "layer3", "layer4", "layer5", "layer6", "layer7"]);
+        PIXI.Assets.add({ alias: "plane", src: "assets/sprites/plane.png" });
+        PIXI.Assets.add({ alias: "tank1", src: "assets/sprites/tank1.png" });
+        PIXI.Assets.add({ alias: "tank2", src: "assets/sprites/tank2.png" });
+        PIXI.Assets.add({ alias: "bullet1", src: "assets/sprites/bullet1.png" });
+        PIXI.Assets.add({ alias: "bullet2", src: "assets/sprites/bullet2.png" });
+
+        const assetsKeys: string[] = [
+            "plane", "layer0", "layer1", "layer2", "layer3", "layer4", "layer5", "layer6", "layer7",
+            "tank1", "tank2", "bullet1", "bullet2"
+        ];
+
+        await PIXI.Assets.load(assetsKeys);
 
         this.startMainScene();
     }
@@ -61,8 +71,8 @@ class GameApp {
 
         if (this.main) {
             this.main.scale.set(scale);
-            this.main.x = this.app.screen.width / 2 - this.main.width / 2;
-            this.main.y = this.app.screen.height / 2 - this.main.height / 2;
+            // this.main.x = this.app.screen.width / 2 - this.main.width / 2;
+            // this.main.y = this.app.screen.height / 2 - this.main.height / 2;
         }
     }
 
