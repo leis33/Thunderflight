@@ -47,10 +47,11 @@ class GameApp {
         PIXI.Assets.add({ alias: "bullet1", src: "assets/sprites/bullet1.png" });
         PIXI.Assets.add({ alias: "bullet2", src: "assets/sprites/bullet2.png" });
         PIXI.Assets.add({ alias: "missile", src: "assets/sprites/missile.png" });
+        PIXI.Assets.add({ alias: "gas_can", src: "assets/sprites/gas_can.png" });
 
         const assetsKeys: string[] = [
             "plane", "layer0", "layer1", "layer2", "layer3", "layer4", "layer5", "layer6", "layer7",
-            "tank1", "tank2", "bullet1", "bullet2", "missile"
+            "tank1", "tank2", "bullet1", "bullet2", "missile", "gas_can"
         ];
 
         await PIXI.Assets.load(assetsKeys);

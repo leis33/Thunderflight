@@ -6,14 +6,18 @@ import { Tank } from "../graphics/Tank";
 import { getRandom, wait } from "../utils/HelperFunctions";
 import { Missile } from "../graphics/Missile";
 import { UI } from "../graphics/UI";
+import { GasCan } from "../graphics/Fuel";
 
 class Main extends PIXI.Container {
     private app: PIXI.Application;
+
+    private isGameActive: boolean;
 
     private background: ParallaxBackground;
     private plane: Plane;
     private tanks: Tank[] = [];
     private missiles: Missile[] = [];
+    private gasCan: GasCan;
 
     private ui: UI;
 
@@ -22,13 +26,19 @@ class Main extends PIXI.Container {
 
         this.app = app;
 
+        this.isGameActive = false;
+
         this.createBackground();
         this.createPlane();
         this.createTanks();
         this.createMissiles();
+        this.createGasCan();
         this.createUI();
 
         this.update();
+
+        this.isGameActive = true;
+        this.plane.startEngine();
     }
 
     // create methods
@@ -43,6 +53,7 @@ class Main extends PIXI.Container {
         this.plane.y = 300;
         this.plane.eventMode = "static";
         this.plane.on("globalpointermove", this.positionPlane, this);
+        this.plane.on(Plane.ON_FUEL_EMPTY, this.gameOver, this);
         this.addChild(this.plane);
     }
 
@@ -89,6 +100,17 @@ class Main extends PIXI.Container {
         }
     }
 
+    private createGasCan(): void {
+        let gasCanX: number = Settings.GAS_CAN_SPAWN_X;
+        let gasCanY: number = getRandom(Settings.GAS_CAN_SPAWN_Y_MAX, Settings.GAS_CAN_SPAWN_Y_MIN);
+
+        this.gasCan = new GasCan(PIXI.Texture.from("gas_can"));
+        this.gasCan.anchor.set(0.5);
+        this.gasCan.x = gasCanX;
+        this.gasCan.y = gasCanY;
+        this.addChild(this.gasCan);
+    }
+
     private createUI(): void {
         this.ui = new UI();
         this.addChild(this.ui);
@@ -101,19 +123,33 @@ class Main extends PIXI.Container {
         tank.fireBullet();
     }
 
+    private gameOver(): void {
+        console.log("GAME OVER");
+        this.isGameActive = false;
+        this.plane.removeAllListeners();
+    }
+
+    private onGasCanCollision(): void {
+        this.gasCan.y = -100;
+        this.plane.fuel += Settings.FUEL_ADD;
+    }
+
     // game loop
     private update(): void {
         const startTime = performance.now();
 
         this.app.ticker.add((ticker: PIXI.Ticker) => {
             this.background.updateLayers();
+
             this.updateTanks();
             this.updateMissiles();
+            this.updateGasCan();
+
             this.detectCollisions()
 
             const currentTime = performance.now();
             const elapsedTime = currentTime - startTime;
-            this.updateScore(Math.floor(elapsedTime / 1000));
+            this.updateUI(elapsedTime);
         });
     }
 
@@ -157,7 +193,18 @@ class Main extends PIXI.Container {
         }
     }
 
+    private updateGasCan(): void {
+        this.gasCan.update();
+
+        if (this.gasCan.x < Settings.GAS_CAN_X_MIN) {
+            this.gasCan.x = Settings.GAS_CAN_SPAWN_X;
+            this.gasCan.y = getRandom(Settings.GAS_CAN_SPAWN_Y_MAX, Settings.GAS_CAN_SPAWN_Y_MIN);
+        }
+    }
+
     private detectCollisions(): void {
+        if (!this.isGameActive) return;
+
         for (const tank of this.tanks) {
             // plane and tank
             if (this.plane.x + Settings.PLANE_HITBOX_WIDTH / 2 > tank.x - tank.getTankWidth() / 2 &&
@@ -192,10 +239,21 @@ class Main extends PIXI.Container {
                 console.log("COLLISION MISSILE !!!!!!");
             }
         }
+
+        // plane and gas can
+        if (this.plane.x + Settings.PLANE_HITBOX_WIDTH / 2 > this.gasCan.x - this.gasCan.width / 2 &&
+            this.plane.y + Settings.PLANE_HITBOX_HEIGHT / 2 > this.gasCan.y - this.gasCan.height / 2 &&
+            this.plane.x - Settings.PLANE_HITBOX_WIDTH / 2 < this.gasCan.x + this.gasCan.width / 2 &&
+            this.plane.y - Settings.PLANE_HITBOX_HEIGHT / 2 < this.gasCan.y + this.gasCan.height / 2) {
+            this.onGasCanCollision();
+        }
     }
 
-    private updateScore(score: number): void {
-        this.ui.setScore(score * Settings.SCORE_MULTIPLIER);
+    private updateUI(elapsedMS: number): void {
+        let score: number = Math.floor(elapsedMS / 1000) * Settings.SCORE_MULTIPLIER;
+
+        this.ui.setScore(score);
+        this.ui.setFuel(this.plane.fuel);
     }
 
     public destroy(): void {

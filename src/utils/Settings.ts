@@ -14,6 +14,7 @@ class Settings {
     public static LAYER_6_SPEED: number = -0.1;
     public static LAYER_7_SPEED: number = -0.05;
 
+    public static PLANE_FUEL: number = 100;
     public static PLANE_HITBOX_WIDTH: number = 110;
     public static PLANE_HITBOX_HEIGHT: number = 50;
 
@@ -37,6 +38,16 @@ class Settings {
     public static MISSILE_HITBOX_HEIGHT: number = 10;
 
     public static SCORE_MULTIPLIER: number = 10;
+
+    public static FUEL_ADD: number = 40;
+    public static FUEL_INTERVAL: number = 200;
+    public static FUEL_PER_INTERVAL: number = 1;
+
+    public static GAS_CAN_SPEED: number = -2;
+    public static GAS_CAN_SPAWN_X: number = Settings.GAME_WIDTH + 2000;
+    public static GAS_CAN_X_MIN: number = -80;
+    public static GAS_CAN_SPAWN_Y_MAX: number = 500;
+    public static GAS_CAN_SPAWN_Y_MIN: number = 50;
 }
 
 export { Settings }
