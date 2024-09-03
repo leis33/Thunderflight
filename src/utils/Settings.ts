@@ -17,10 +17,13 @@ class Settings {
     public static TANKS_COUNT: number = 4;
     public static TANK_SPEED: number = -1;
     public static TANK_SPAWN_X: number = Settings.GAME_WIDTH + 60;
-    public static TANK_SPAWN_X_STEP: number = 360;
     public static TANK_X_MIN: number = -120;
     public static TANK_SPAWN_Y_MAX: number = 110;
     public static TANK_SPAWN_Y_MIN: number = 50;
+
+    public static GRAVITY: number = 480;
+    public static BULLET_VELOCITY_MIN: number = -500;
+    public static BULLET_VELOCITY_MAX: number = -1100;
 }
 
 export { Settings }

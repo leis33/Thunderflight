@@ -1,9 +1,10 @@
 import * as PIXI from "pixi.js";
+import gsap from "gsap";
 import { Plane } from "../graphics/Plane";
 import { ParallaxBackground } from "../graphics/ParallaxBackground";
 import { Settings } from "../utils/Settings";
 import { Tank } from "../graphics/Tank";
-import { getRandom } from "../utils/HelperFunctions";
+import { getRandom, wait } from "../utils/HelperFunctions";
 
 class Main extends PIXI.Container {
     private app: PIXI.Application;
@@ -39,7 +40,7 @@ class Main extends PIXI.Container {
         this.addChild(this.plane);
     }
 
-    private createTanks(): void {
+    private async createTanks(): Promise<void> {
         const tanksKeys: string[] = ["tank1", "tank2"];
         const bulletKeys: string[] = ["bullet1", "bullet2"];
         let randomKey: number;
@@ -54,13 +55,22 @@ class Main extends PIXI.Container {
             let tank = new Tank(tanksKeys[randomKey], bulletKeys[randomKey]);
             tank.x = tankX;
             tank.y = tankY;
+            tank.on(Tank.ON_BULLET_RESET, this.onBulletReset, this);
             this.addChild(tank);
             this.tanks.push(tank);
 
-            tankX += Settings.TANK_SPAWN_X_STEP;
+            tank.fireBullet();
+
+            await wait(2300);
         }
     }
     // end of create methods
+
+    // event methods
+    private async onBulletReset(tank: Tank): Promise<void> {
+        await wait(500);
+        tank.fireBullet();
+    }
 
     // game loop
     private update(): void {
@@ -72,7 +82,7 @@ class Main extends PIXI.Container {
     }
 
     private positionPlane(event: PIXI.FederatedPointerEvent): void {
-        const coords: PIXI.Point = this.plane.parent.toLocal({ x: event.x, y: event.y });
+        const coords: PIXI.Point = this.toLocal({ x: event.x, y: event.y });
             
         if (coords.y < 0) {
             coords.y = 0;
@@ -102,10 +112,26 @@ class Main extends PIXI.Container {
 
     private detectCollisions(): void {
         for (const tank of this.tanks) {
-            if (this.plane.x + this.plane.width / 2 > tank.x - tank.width / 2 &&
-                this.plane.y + this.plane.height / 2 > tank.y - tank.height / 2 &&
-                this.plane.x - this.plane.width / 2 < tank.x + tank.width / 2 &&
-                this.plane.y - this.plane.height / 2 < tank.y + tank.height / 2) {
+            // plane and tank
+            if (this.plane.x + this.plane.width / 2 > tank.x - tank.getTankWidth() / 2 &&
+                this.plane.y + this.plane.height / 2 > tank.y - tank.getTankHeight() / 2 &&
+                this.plane.x - this.plane.width / 2 < tank.x + tank.getTankWidth() / 2 &&
+                this.plane.y - this.plane.height / 2 < tank.y + tank.getTankHeight() / 2) {
+                console.log("COLLISION !!!!!!");
+            }
+
+            // bullet and world bounds
+            let bulletCoords: PIXI.Point = this.toLocal({ x: tank.getBulletX(), y: tank.getBulletY()}, tank);
+            if (bulletCoords.x < Settings.TANK_X_MIN || bulletCoords.y > Settings.GAME_HEIGHT) {
+                console.log("Bullet reset");
+                tank.resetBullet();
+            }
+
+            // bullet and plane
+            if (this.plane.x + this.plane.width / 2 > bulletCoords.x &&
+                this.plane.y + this.plane.height / 2 > bulletCoords.y &&
+                this.plane.x - this.plane.width / 2 < bulletCoords.x &&
+                this.plane.y - this.plane.height / 2 < bulletCoords.y) {
                 console.log("COLLISION !!!!!!");
             }
         }
