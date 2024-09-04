@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js"
 import { Settings } from "../../utils/Settings";
 import { HealthBar } from "./HealthBar";
 import { GameOverScreen } from "./GameOverScreen";
+import { Localizer } from "../../utils/Localizer";
 
 class UI extends PIXI.Container {
     private scoreText: PIXI.Text;
@@ -13,15 +14,15 @@ class UI extends PIXI.Container {
     constructor() {
         super();
 
-        const FUEL_TEXT_OFFSET_X: number = 30;
+        const FUEL_TEXT_OFFSET_X: number = 80;
         const HEALTH_BAR_OFFSET_Y: number = 30;
 
-        this.scoreText = new PIXI.Text({ text: "SCORE: 0", style: { fontSize: 36, fill: "#FFFFFF" } });
+        this.scoreText = new PIXI.Text({ text: Localizer.getInstance().getString("score") , style: { fontSize: 36, fill: "#FFFFFF" } });
         this.scoreText.x = 30;
         this.scoreText.y = 30;
         this.addChild(this.scoreText);
         
-        this.fuelText = new PIXI.Text({ text: "FUEL: 100", style: { fontSize: 36, fill: "#FFFFFF" } });
+        this.fuelText = new PIXI.Text({ text: Localizer.getInstance().getString("fuel") , style: { fontSize: 36, fill: "#FFFFFF" } });
         this.fuelText.x = Settings.GAME_WIDTH - this.fuelText.width - FUEL_TEXT_OFFSET_X;
         this.fuelText.y = 30;
         this.addChild(this.fuelText);
@@ -37,11 +38,11 @@ class UI extends PIXI.Container {
     }
 
     public setScore(score: number): void {
-        this.scoreText.text = "SCORE: " + score;
+        this.scoreText.text = Localizer.getInstance().getString("score") + score;
     }
 
     public setFuel(fuel: number): void {
-        this.fuelText.text = "FUEL: " + fuel;
+        this.fuelText.text = Localizer.getInstance().getString("fuel") + fuel;
     }
 
     public setHearts(hearts: number): void {

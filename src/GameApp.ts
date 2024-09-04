@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { Main } from "./scenes/Main";
 import { Settings } from "./utils/Settings";
+import { Localizer } from "./utils/Localizer";
 
 let gameApp: GameApp;
 
@@ -28,6 +29,8 @@ class GameApp {
         this.app.resizeTo.onresize = () => {
             this.resize();
         }
+
+        Localizer.getInstance().language = Settings.LANGUAGE;
     }
     
     private async loadAssets(): Promise<void> {
@@ -49,9 +52,11 @@ class GameApp {
         PIXI.Assets.add({ alias: "gas_can", src: "assets/sprites/gas_can.png" });
         PIXI.Assets.add({ alias: "heart", src: "assets/sprites/heart.png" });
 
+        PIXI.Assets.add({ alias: "en", src: "assets/locals/en.json" });
+
         const assetsKeys: string[] = [
             "plane", "layer0", "layer1", "layer2", "layer3", "layer4", "layer5", "layer6", "layer7",
-            "tank1", "tank2", "bullet1", "bullet2", "missile", "gas_can", "heart"
+            "tank1", "tank2", "bullet1", "bullet2", "missile", "gas_can", "heart", "en"
         ];
 
         await PIXI.Assets.load(assetsKeys);

@@ -4,6 +4,7 @@ class Settings {
 
     public static BACKGROUND_COLOR: string = "#95eda3";
     public static CONTAINER_ID: string = "gameApp";
+    public static LANGUAGE: string = "en";
 
     public static LAYER_0_SPEED: number = -1;
     public static LAYER_1_SPEED: number = -0.5;

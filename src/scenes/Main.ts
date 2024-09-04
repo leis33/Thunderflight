@@ -115,6 +115,7 @@ class Main extends PIXI.Container {
         this.ui = new UI();
         this.ui.setHearts(this.plane.hearts);
         this.ui.setFuel(this.plane.fuel);
+        this.ui.setScore(0);
         this.addChild(this.ui);
     }
     // end of create methods
