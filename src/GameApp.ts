@@ -88,7 +88,10 @@ class GameApp {
             this.main.destroy();
         }
 
-        this.app.stage.removeAllListeners();
+        if (this.app.stage) {
+            this.app.stage.removeAllListeners();
+        }
+
         this.app.destroy(true, true);
     }
 }
