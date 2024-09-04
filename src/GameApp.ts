@@ -6,10 +6,11 @@ let gameApp: GameApp;
 
 class GameApp {
     private app: PIXI.Application;
-    private main: PIXI.Container;
+    private main: Main;
 
     constructor() {
         this.createApp();
+        this.loadAssets();
     }
 
     private async createApp(): Promise<void> {
@@ -27,8 +28,6 @@ class GameApp {
         this.app.resizeTo.onresize = () => {
             this.resize();
         }
-
-        this.loadAssets();
     }
     
     private async loadAssets(): Promise<void> {
