@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import gsap from "gsap";
 import { Settings } from "../utils/Settings";
 
 class Plane extends PIXI.Container {
@@ -7,8 +8,10 @@ class Plane extends PIXI.Container {
     private plane: PIXI.Sprite;
     private _fuel: number = Settings.PLANE_FUEL;
     private _hearts: number = Settings.HEARTS_COUNT;
+    private _isInvulnerable: boolean = false;
 
     private refreshInterval: NodeJS.Timeout;
+    private tweenInvulnerable: gsap.core.Tween;
 
     constructor() {
         super();
@@ -16,6 +19,10 @@ class Plane extends PIXI.Container {
         this.plane = PIXI.Sprite.from("plane");
         this.plane.anchor.set(0.5);
         this.addChild(this.plane);
+    }
+
+    get isInvulnerable(): boolean {
+        return this._isInvulnerable;
     }
 
     get fuel(): number {
@@ -62,6 +69,23 @@ class Plane extends PIXI.Container {
         }, Settings.FUEL_INTERVAL);
     }
 
+    public becomeInvulnerable(): void {
+        if (this.tweenInvulnerable && this.tweenInvulnerable.isActive()) {
+            return;
+        }
+
+        this._isInvulnerable = true;
+
+        this.tweenInvulnerable = gsap.to(this, {
+            alpha: 0.1,
+            duration: 0.3,
+            yoyo: true,
+            ease: "sine.out",
+            repeat: 5,
+            onComplete: () => this._isInvulnerable = false
+        });
+    }
+
     private gameOver(): void {
         clearInterval(this.refreshInterval);
         this.refreshInterval = null;
@@ -74,6 +98,11 @@ class Plane extends PIXI.Container {
 
         clearInterval(this.refreshInterval);
         this.refreshInterval = null;
+
+        if (this.tweenInvulnerable) {
+            this.tweenInvulnerable.kill();
+            this.tweenInvulnerable = null;
+        }
     }
 }
 

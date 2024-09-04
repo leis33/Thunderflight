@@ -140,19 +140,28 @@ class Main extends PIXI.Container {
     }
 
     private onBulletCollision(tank: Tank): void {
+        if (this.plane.isInvulnerable) return;
+
         tank.resetBullet();
-        this.plane.hearts -= Settings.DAMAGE_BULLET;
-        this.ui.setHearts(this.plane.hearts);
+        this.takePlaneDamage(Settings.DAMAGE_BULLET);
     }
 
     private onMissileCollision(missile: Missile): void {
+        if (this.plane.isInvulnerable) return;
+
         missile.y = -100;
-        this.plane.hearts -= Settings.DAMAGE_MISSILE;
-        this.ui.setHearts(this.plane.hearts);
+        this.takePlaneDamage(Settings.DAMAGE_MISSILE);
     }
 
     private onTankCollision(): void {
-        this.plane.hearts -= Settings.DAMAGE_TANK;
+        if (this.plane.isInvulnerable) return;
+
+        this.takePlaneDamage(Settings.DAMAGE_TANK);
+    }
+
+    private takePlaneDamage(damage: number): void {
+        this.plane.becomeInvulnerable();
+        this.plane.hearts -= damage;
         this.ui.setHearts(this.plane.hearts);
     }
 
