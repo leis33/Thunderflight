@@ -73,7 +73,7 @@ class Main extends PIXI.Container {
             tank.x = tankX;
             tank.y = tankY;
             tank.on(Tank.ON_BULLET_RESET, this.onBulletReset, this);
-            this.addChild(tank);
+            this.addChildAt(tank, 2);
             this.tanks.push(tank);
 
             tank.fireBullet();
@@ -93,7 +93,7 @@ class Main extends PIXI.Container {
             missile.anchor.set(0.5);
             missile.x = missileX;
             missile.y = missileY;
-            this.addChild(missile);
+            this.addChildAt(missile, 2);
             this.missiles.push(missile);
 
             await wait(400);
@@ -128,6 +128,7 @@ class Main extends PIXI.Container {
     private gameOver(): void {
         console.log("GAME OVER");
 
+        this.ui.showGameOverScreen();
         this.ui.setFuel(this.plane.fuel);
         this.isGameActive = false;
         this.plane.removeAllListeners();
