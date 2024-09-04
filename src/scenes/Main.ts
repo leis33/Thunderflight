@@ -2,11 +2,11 @@ import * as PIXI from "pixi.js";
 import { Plane } from "../graphics/Plane";
 import { ParallaxBackground } from "../graphics/ParallaxBackground";
 import { Settings } from "../utils/Settings";
-import { Tank } from "../graphics/Tank";
+import { Tank } from "../graphics/obstacles/Tank";
 import { getRandom, wait } from "../utils/HelperFunctions";
-import { Missile } from "../graphics/Missile";
-import { UI } from "../graphics/UI";
-import { GasCan } from "../graphics/Fuel";
+import { Missile } from "../graphics/obstacles/Missile";
+import { UI } from "../graphics/ui/UI";
+import { GasCan } from "../graphics/obstacles/Fuel";
 
 class Main extends PIXI.Container {
     private app: PIXI.Application;

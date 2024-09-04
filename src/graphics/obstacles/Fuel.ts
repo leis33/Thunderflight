@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js"
-import { Settings } from "../utils/Settings";
+import { Settings } from "../../utils/Settings";
 
 class GasCan extends PIXI.Sprite {
     constructor(options?: PIXI.SpriteOptions | PIXI.Texture) {

@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js"
-import { Settings } from "../utils/Settings";
+import { Settings } from "../../utils/Settings";
 
 class GameOverScreen extends PIXI.Container {
     private background: PIXI.Graphics;

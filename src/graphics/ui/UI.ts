@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js"
-import { Settings } from "../utils/Settings";
+import { Settings } from "../../utils/Settings";
 import { HealthBar } from "./HealthBar";
 import { GameOverScreen } from "./GameOverScreen";
 

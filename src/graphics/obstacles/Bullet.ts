@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js"
 import gsap from "gsap";
-import { getRandom } from "../utils/HelperFunctions";
-import { Settings } from "../utils/Settings";
+import { getRandom } from "../../utils/HelperFunctions";
+import { Settings } from "../../utils/Settings";
 
 interface ITimeObject {
     time: number
