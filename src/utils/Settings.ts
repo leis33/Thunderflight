@@ -40,7 +40,7 @@ class Settings {
     public static SCORE_MULTIPLIER: number = 10;
 
     public static FUEL_ADD: number = 40;
-    public static FUEL_INTERVAL: number = 200;
+    public static FUEL_INTERVAL: number = 200; // in ms
     public static FUEL_PER_INTERVAL: number = 1;
 
     public static GAS_CAN_SPEED: number = -2;
@@ -48,6 +48,11 @@ class Settings {
     public static GAS_CAN_X_MIN: number = -80;
     public static GAS_CAN_SPAWN_Y_MAX: number = 500;
     public static GAS_CAN_SPAWN_Y_MIN: number = 50;
+
+    public static HEARTS_COUNT: number = 4;
+    public static DAMAGE_TANK: number = this.HEARTS_COUNT;
+    public static DAMAGE_MISSILE: number = 1;
+    public static DAMAGE_BULLET: number = 1;
 }
 
 export { Settings }

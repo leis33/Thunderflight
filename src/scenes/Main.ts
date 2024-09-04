@@ -53,7 +53,7 @@ class Main extends PIXI.Container {
         this.plane.y = 300;
         this.plane.eventMode = "static";
         this.plane.on("globalpointermove", this.positionPlane, this);
-        this.plane.on(Plane.ON_FUEL_EMPTY, this.gameOver, this);
+        this.plane.on(Plane.ON_GAME_OVER, this.gameOver, this);
         this.addChild(this.plane);
     }
 
@@ -69,7 +69,7 @@ class Main extends PIXI.Container {
             randomKey = getRandom(tanksKeys.length, 0);
             tankY = Settings.GAME_HEIGHT - getRandom(Settings.TANK_SPAWN_Y_MAX, Settings.TANK_SPAWN_Y_MIN);
 
-            let tank = new Tank(tanksKeys[randomKey], bulletKeys[randomKey]);
+            let tank: Tank = new Tank(tanksKeys[randomKey], bulletKeys[randomKey]);
             tank.x = tankX;
             tank.y = tankY;
             tank.on(Tank.ON_BULLET_RESET, this.onBulletReset, this);
@@ -89,7 +89,7 @@ class Main extends PIXI.Container {
         for (let i = 0; i < Settings.MISSILES_COUNT; i++) {
             missileY = getRandom(Settings.MISSILE_SPAWN_Y_MAX, Settings.MISSILE_SPAWN_Y_MIN);
 
-            let missile = new Missile(PIXI.Texture.from("missile"));
+            let missile: Missile = new Missile(PIXI.Texture.from("missile"));
             missile.anchor.set(0.5);
             missile.x = missileX;
             missile.y = missileY;
@@ -113,6 +113,8 @@ class Main extends PIXI.Container {
 
     private createUI(): void {
         this.ui = new UI();
+        this.ui.setHearts(this.plane.hearts);
+        this.ui.setFuel(this.plane.fuel);
         this.addChild(this.ui);
     }
     // end of create methods
@@ -134,6 +136,23 @@ class Main extends PIXI.Container {
     private onGasCanCollision(): void {
         this.gasCan.y = -100;
         this.plane.fuel += Settings.FUEL_ADD;
+    }
+
+    private onBulletCollision(tank: Tank): void {
+        tank.resetBullet();
+        this.plane.hearts -= Settings.DAMAGE_BULLET;
+        this.ui.setHearts(this.plane.hearts);
+    }
+
+    private onMissileCollision(missile: Missile): void {
+        missile.y = -100;
+        this.plane.hearts -= Settings.DAMAGE_MISSILE;
+        this.ui.setHearts(this.plane.hearts);
+    }
+
+    private onTankCollision(): void {
+        this.plane.hearts -= Settings.DAMAGE_TANK;
+        this.ui.setHearts(this.plane.hearts);
     }
 
     // game loop
@@ -213,13 +232,12 @@ class Main extends PIXI.Container {
                 this.plane.y + Settings.PLANE_HITBOX_HEIGHT / 2 > tank.y - tank.getTankHeight() / 2 &&
                 this.plane.x - Settings.PLANE_HITBOX_WIDTH / 2 < tank.x + tank.getTankWidth() / 2 &&
                 this.plane.y - Settings.PLANE_HITBOX_HEIGHT / 2 < tank.y + tank.getTankHeight() / 2) {
-                console.log("COLLISION TANK !!!!!!");
+                this.onTankCollision();
             }
 
             // bullet and world bounds
             let bulletCoords: PIXI.Point = this.toLocal({ x: tank.getBulletX(), y: tank.getBulletY() }, tank);
             if (bulletCoords.x < Settings.TANK_X_MIN || bulletCoords.y > Settings.GAME_HEIGHT) {
-                console.log("Bullet reset");
                 tank.resetBullet();
             }
 
@@ -228,7 +246,7 @@ class Main extends PIXI.Container {
                 this.plane.y + Settings.PLANE_HITBOX_HEIGHT / 2 > bulletCoords.y &&
                 this.plane.x - Settings.PLANE_HITBOX_WIDTH / 2 < bulletCoords.x &&
                 this.plane.y - Settings.PLANE_HITBOX_HEIGHT / 2 < bulletCoords.y) {
-                console.log("COLLISION !!!!!!");
+                this.onBulletCollision(tank);
             }
         }
 
@@ -238,7 +256,7 @@ class Main extends PIXI.Container {
                 this.plane.y + Settings.PLANE_HITBOX_HEIGHT / 2 > missile.y - Settings.MISSILE_HITBOX_HEIGHT / 2 &&
                 this.plane.x - Settings.PLANE_HITBOX_WIDTH / 2 < missile.x + missile.width / 2 &&
                 this.plane.y - Settings.PLANE_HITBOX_HEIGHT / 2 < missile.y + Settings.MISSILE_HITBOX_HEIGHT / 2) {
-                console.log("COLLISION MISSILE !!!!!!");
+                this.onMissileCollision(missile);
             }
         }
 
