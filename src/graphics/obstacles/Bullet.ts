@@ -8,6 +8,8 @@ interface ITimeObject {
 }
 
 class Bullet extends PIXI.Sprite {
+    private readonly ANGLE: number = 45;
+
     private _velocity: number;
     
     private timeObject: ITimeObject = {
@@ -54,8 +56,8 @@ class Bullet extends PIXI.Sprite {
     private onTweenUpdate(): void {
         let t: number = this.timeObject.time;
 
-        let newX: number = ((this._velocity) * Math.cos(45 * 3.14 / 180)) * t;
-        let newY: number = ((this._velocity) * Math.sin(45 * 3.14 / 180)) * t + Settings.GRAVITY * t * t;
+        let newX: number = ((this._velocity) * Math.cos(this.ANGLE * 3.14 / 180)) * t;
+        let newY: number = ((this._velocity) * Math.sin(this.ANGLE * 3.14 / 180)) * t + Settings.GRAVITY * t * t;
 
         this.rotation = Math.atan2(newY - this.y, newX - this.x) - 3.14;
 

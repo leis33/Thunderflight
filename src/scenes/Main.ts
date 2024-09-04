@@ -21,6 +21,8 @@ class Main extends PIXI.Container {
 
     private ui: UI;
 
+    private startTime: number;
+
     constructor(app: PIXI.Application) {
         super();
 
@@ -35,10 +37,16 @@ class Main extends PIXI.Container {
         this.createGasCan();
         this.createUI();
 
-        this.update();
+        this.startGame();
+    }
 
+    private startGame(): void {
         this.isGameActive = true;
         this.plane.startEngine();
+
+        this.startTime = performance.now();
+
+        this.app.ticker.add(this.update, this);
     }
 
     // create methods
@@ -126,15 +134,6 @@ class Main extends PIXI.Container {
         tank.fireBullet();
     }
 
-    private gameOver(): void {
-        console.log("GAME OVER");
-
-        this.ui.showGameOverScreen();
-        this.ui.setFuel(this.plane.fuel);
-        this.isGameActive = false;
-        this.plane.removeAllListeners();
-    }
-
     private onGasCanCollision(): void {
         this.gasCan.y = -100;
         this.plane.fuel += Settings.FUEL_ADD;
@@ -166,23 +165,28 @@ class Main extends PIXI.Container {
         this.ui.setHearts(this.plane.hearts);
     }
 
+    private gameOver(): void {
+        console.log("GAME OVER");
+
+        this.ui.showGameOverScreen();
+        this.ui.setFuel(this.plane.fuel);
+        this.isGameActive = false;
+        this.plane.removeAllListeners();
+    }
+
     // game loop
     private update(): void {
-        const startTime = performance.now();
+        this.background.updateLayers();
 
-        this.app.ticker.add((ticker: PIXI.Ticker) => {
-            this.background.updateLayers();
+        this.updateTanks();
+        this.updateMissiles();
+        this.updateGasCan();
 
-            this.updateTanks();
-            this.updateMissiles();
-            this.updateGasCan();
+        this.detectCollisions()
 
-            this.detectCollisions()
-
-            const currentTime = performance.now();
-            const elapsedTime = currentTime - startTime;
-            this.updateUI(elapsedTime);
-        });
+        const currentTime = performance.now();
+        const elapsedTime = currentTime - this.startTime;
+        this.updateUI(elapsedTime);
     }
 
     private positionPlane(event: PIXI.FederatedPointerEvent): void {
