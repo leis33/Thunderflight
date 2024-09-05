@@ -9,6 +9,8 @@ class GameApp {
     private app: PIXI.Application;
     private main: Main;
 
+    private blackBars: PIXI.Graphics;
+
     constructor() {
         this.createApp();
         this.loadAssets();
@@ -68,10 +70,13 @@ class GameApp {
         this.main = new Main(this.app);
         this.app.stage.addChild(this.main);
 
+        this.blackBars = new PIXI.Graphics();
+        this.app.stage.addChild(this.blackBars);
+
         this.resize();
     }
     
-    public resize(): void {
+    private resize(): void {
         const width = this.app.screen.width;
         const height = this.app.screen.height;
         const scale = Math.min(width / Settings.GAME_WIDTH, height / Settings.GAME_HEIGHT);
@@ -80,6 +85,24 @@ class GameApp {
             this.main.scale.set(scale);
             // this.main.x = this.app.screen.width / 2 - this.main.width / 2;
             // this.main.y = this.app.screen.height / 2 - this.main.height / 2;
+        }
+
+        this.createBlackBars();
+    }
+
+    private createBlackBars(): void {
+        const bounds: PIXI.Bounds = this.main.getBackgroundBounds();
+
+        this.blackBars.clear();
+
+        if (bounds.width < this.app.screen.width) {
+            this.blackBars.beginPath();
+            this.blackBars.moveTo(bounds.width, 0);
+            this.blackBars.lineTo(this.app.screen.width, 0);
+            this.blackBars.lineTo(this.app.screen.width, this.app.screen.height);
+            this.blackBars.lineTo(bounds.width, this.app.screen.height);
+            this.blackBars.lineTo(bounds.width, 0);
+            this.blackBars.fill(Settings.BACKGROUND_COLOR);
         }
     }
 

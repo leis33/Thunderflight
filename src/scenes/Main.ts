@@ -40,6 +40,10 @@ class Main extends PIXI.Container {
         this.startGame();
     }
 
+    public getBackgroundBounds(): PIXI.Bounds {
+        return this.background.getBounds();
+    }
+
     private startGame(): void {
         this.isGameActive = true;
         this.plane.startEngine();
