@@ -28,6 +28,7 @@ class GameApp {
         mainNode.appendChild(<any>this.app.canvas);
 
 
+        this.app.renderer.events.cursorStyles.default = "none";
         this.app.resizeTo.onresize = () => {
             this.resize();
         }
