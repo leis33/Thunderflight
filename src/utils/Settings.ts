@@ -41,7 +41,7 @@ class Settings {
     public static SCORE_MULTIPLIER: number = 10;
 
     public static FUEL_ADD: number = 40;
-    public static FUEL_INTERVAL: number = 200; // in ms
+    public static FUEL_INTERVAL: number = 250; // in ms
     public static FUEL_PER_INTERVAL: number = 1;
 
     public static GAS_CAN_SPEED: number = -2;
